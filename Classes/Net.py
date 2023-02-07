@@ -24,6 +24,12 @@ class Net:
         """
         return 0
 
+    def _error(self, a, b):
+        """
+        Get error between two datapoints
+        """
+        return self.Distance(numpy.subtract(a-b))#consider outsourcing subtract
+
     def _backProp(self, result, target):
         """
         backpropogate errors through network recursively, update weights
@@ -41,3 +47,5 @@ class Net:
 n = Net([], lambda x:1/(1+exp(-1*x)), lambda a,b:numpy.linalg.norm(a, b))#lambda a,b:abs(a-b))
 n._backProp(3, 3)
 print(n.Network)
+#print(numpy.subtract([2, 4, 2], [3, 2, 4]))
+#print(numpy.subtract(3, 4))
