@@ -34,7 +34,7 @@ class Net:
         """
         backpropogate errors through network recursively, update weights
         """
-        self.Network.append('backpropped')
+        self.Network.append('backpropped (!)')
 
     #Publics
     def GetLayer(self, depth):
@@ -42,6 +42,8 @@ class Net:
         Get layer at given depth
         """
         return self.Network[depth]
+
+    
 
 #Test
 n = Net([], lambda x:1/(1+exp(-1*x)), lambda a,b:numpy.linalg.norm(a, b))#lambda a,b:abs(a-b))
