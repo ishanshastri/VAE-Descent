@@ -1,5 +1,6 @@
 import numpy as np
 from math import exp
+import random
 
 class Net:
     Activations: callable
@@ -12,11 +13,16 @@ class Net:
 
         self._initializeWeights(dimensions)
 
-    def _initializeWeights(self, dimensions, seed=[]):
+    def _initializeWeights(self, dimensions, seed=[], genFunc=lambda: random.random()):
         """
         initialize network (randomly if no seed given)
         """
         self.Network = ['STUB']#{'STUB': 0}
+        for l in dimensions:
+            layer = []
+            for i in range(l):
+                layer.append(genFunc())
+            self.Network.append(layer)
 
     def _evaluate(self, input):
         """
