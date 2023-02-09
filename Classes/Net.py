@@ -1,14 +1,14 @@
-import numpy
+import numpy as np
 from math import exp
 
 class Net:
-    Activation: callable
-    Distance: callable
+    Activations: callable
+    Length: callable
     Network: list()#dict
 
-    def __init__(self, dimensions, activation, norm):
-        self.Activation = activation
-        self.Distance = norm
+    def __init__(self, dimensions, activations, norm):
+        self.Activations = activations
+        self.Length = norm
 
         self._initializeWeights(dimensions)
 
@@ -28,7 +28,7 @@ class Net:
         """
         Get error between two datapoints
         """
-        return self.Distance(numpy.subtract(a-b))#consider outsourcing subtract
+        return self.Length(np.subtract(a-b))#consider outsourcing subtract
 
     def _backProp(self, result, target):
         """
@@ -43,11 +43,13 @@ class Net:
         """
         return self.Network[depth]
 
-    
-
 #Test
-n = Net([], lambda x:1/(1+exp(-1*x)), lambda a,b:numpy.linalg.norm(a, b))#lambda a,b:abs(a-b))
+n = Net([3, 2, 3], [lambda x:1/(1+exp(-1*x)) for i in range(3)], lambda a:np.linalg.norm(a))#lambda a,b:abs(a-b))
 n._backProp(3, 3)
+
 print(n.Network)
+print(n.Activations)
+
 #print(numpy.subtract([2, 4, 2], [3, 2, 4]))
 #print(numpy.subtract(3, 4))
+#print(np.linalg.norm([3, 4]))
