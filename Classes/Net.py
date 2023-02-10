@@ -17,7 +17,7 @@ class Net:
         """
         initialize network (randomly if no seed given)
         """
-        self.Network = ['STUB']#{'STUB': 0}
+        #self.Network = ['STUB']#{'STUB': 0}
         for l in dimensions:
             layer = []
             for i in range(l):
@@ -52,6 +52,7 @@ class Net:
 #Test
 n = Net([3, 2, 3], [lambda x:1/(1+exp(-1*x)) for i in range(3)], lambda a:np.linalg.norm(a))#lambda a,b:abs(a-b))
 n._backProp(3, 3)
+n._backProp(4, 3)
 
 print(n.Network)
 print(n.Activations)
