@@ -2,6 +2,21 @@ import numpy as np
 from math import exp
 import random
 
+class Neuron:
+    Weights: list()
+    #Biases: list()
+
+    def __init__(self, inp_dim, rng):
+        self._initializeWeights(inp_dim, rng)
+
+    def _initializeWeights(self, inp_dim, rng):
+        Weights = [rng() for i in range(inp_dim + 1)]
+
+    def Evaluate(self, input):
+        #w^x
+        np.dot(self.Weights, input)
+
+
 class Net:
     Activations: callable
     Length: callable
@@ -50,12 +65,16 @@ class Net:
         return self.Network[depth]
 
 #Test
-n = Net([3, 2, 3], [lambda x:1/(1+exp(-1*x)) for i in range(3)], lambda a:np.linalg.norm(a))#lambda a,b:abs(a-b))
+n = Net([3, 2, 3], 
+[lambda x:1/(1+exp(-1*x)) for i in range(3)], 
+lambda a:np.linalg.norm(a))#lambda a,b:abs(a-b))
 n._backProp(3, 3)
 n._backProp(4, 3)
 
-print(n.Network)
-print(n.Activations)
+#print(n.Network)
+#print(n.Activations)
+
+neuron = Neuron()
 
 #print(numpy.subtract([2, 4, 2], [3, 2, 4]))
 #print(numpy.subtract(3, 4))
