@@ -19,10 +19,9 @@ class Net:
         """
         #self.Network = ['STUB']#{'STUB': 0}
         self.Network = []
+        #setWeights = np.vectorize(lambda x: x.append(genFunc()))#septVigts
         for l in dimensions:
-            layer = []
-            for i in range(l):
-                layer.append(genFunc())
+            layer = [genFunc() for i in range(l)]
             self.Network.append(layer)
 
     def _evaluate(self, input):
