@@ -18,6 +18,7 @@ class Net:
         initialize network (randomly if no seed given)
         """
         #self.Network = ['STUB']#{'STUB': 0}
+        self.Network = []
         for l in dimensions:
             layer = []
             for i in range(l):
