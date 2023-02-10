@@ -60,4 +60,4 @@ print(n.Activations)
 
 #print(numpy.subtract([2, 4, 2], [3, 2, 4]))
 #print(numpy.subtract(3, 4))
-#print(np.linalg.norm([3, 4]))
+#print(np.linalg.norm([3, 4]))f
