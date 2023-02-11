@@ -32,7 +32,12 @@ class Sigmoid(ActivationFunction):
 class BackProp:
     def __init__(self) -> None:
         pass
-    
+
+    def GetGrad(self, net, input, target, output):
+        depth = len(net.Network)
+        for i in range(depth-1, -1, -1):
+            print(i)
+
 class Neuron:
     Weights: list()
     Activation: callable
@@ -88,6 +93,9 @@ class Net:
             #print(output)
         return self._evaluate(output, curr+1)
 
+    #def _getNumWeights(self):
+    #    return np.sum(self.Dimensions)
+
    #def back_forth_prop:
         #propoagate back and forth between CIF->E2->DC->four-corners-of-MC->M3->MC->repeat
 
@@ -117,3 +125,6 @@ n = Net([2, 3, 2, 3, 5], [[sigmoid, d_dx_sigmoid] for i in range(4)], lambda a:n
 
 print("output:", n._evaluate([1, 0, 0], 0))
 print_net(n)
+
+bp = BackProp()
+bp.GetGrad(n, [], [], [])
