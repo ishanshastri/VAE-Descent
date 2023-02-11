@@ -66,7 +66,7 @@ class Net:
         return self._evaluate(output, curr+1)
 
    #def back_forth_prop:
-        #propoagate between CIF->E2->DC->four-corners-of-MC->M3->MC->repeat
+        #propoagate back n forth between CIF->E2->DC->four-corners-of-MC->M3->MC->repeat
 
     def _error(self, a, b):
         """
