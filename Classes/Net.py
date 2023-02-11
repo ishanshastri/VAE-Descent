@@ -10,6 +10,29 @@ def print_net(n):
             print(n)
     print("================")
 
+class ActivationFunction:
+    def __init__(self) -> None:
+        pass
+
+    def Evaluate(self, x):
+        pass
+
+    def Derivative(self, x):
+        pass
+
+class Sigmoid(ActivationFunction):
+    def Evaluate(self, x):
+        return 1/(1+exp(-1*x))
+
+    def Derivative(self, x):
+        return self.Evaluate(x)*(1-self.Evaluate(x))
+#s = Sigmoid()
+#print(s.Derivative(0))
+#============================================================================
+class BackProp:
+    def __init__(self) -> None:
+        pass
+    
 class Neuron:
     Weights: list()
     Activation: callable
@@ -22,7 +45,7 @@ class Neuron:
         self.Weights = [rng() for i in range(inp_dim + 1)]
 
     def Evaluate(self, input):
-        return self.Activation(np.dot(self.Weights, input))
+        return self.Activation[0](np.dot(self.Weights, input))
     
     def printWeights(self):
         print(self.Weights)
@@ -88,7 +111,9 @@ class Net:
         return self.Network[depth]
 
 #Test(s)
-n = Net([2, 3, 2, 3, 5], [lambda x:1/(1+exp(-1*x)) for i in range(4)], lambda a:np.linalg.norm(a))
+sigmoid = lambda x:1/(1+exp(-1*x))
+d_dx_sigmoid = lambda x:sigmoid(x)*(1-sigmoid(x))
+n = Net([2, 3, 2, 3, 5], [[sigmoid, d_dx_sigmoid] for i in range(4)], lambda a:np.linalg.norm(a))
 
 print("output:", n._evaluate([1, 0, 0], 0))
 print_net(n)
