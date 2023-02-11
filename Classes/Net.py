@@ -2,28 +2,33 @@ import numpy as np
 from math import exp
 import random
 
+def print_net(n):
+    print("================")
+    for l in n.Network:
+        print("layer")
+        for n in l:
+            print(n)
+    print("================")
+
 class Neuron:
     Weights: list()
-    #Biases: list()
+    Activation: callable
 
-
-    def __init__(self, inp_dim, rng):
+    def __init__(self, inp_dim, rng, act):
+        self.Activation = act
         self._initializeWeights(inp_dim, rng)
 
     def _initializeWeights(self, inp_dim, rng):
         self.Weights = [rng() for i in range(inp_dim + 1)]
 
     def Evaluate(self, input):
-        return np.dot(self.Weights, input)
+        return self.Activation(np.dot(self.Weights, input))
     
     def printWeights(self):
         print(self.Weights)
 
     def __str__(self):
         return str(self.Weights)
-
-
-
 
 class Net:
     Activations: callable
@@ -35,19 +40,17 @@ class Net:
         self.Length = norm
         self._initializeNet(dimensions)
 
-
     def _initializeNet(self, network_dimensions, seed=[], genFunc=lambda: random.random()):
         """
         initialize network (randomly if no seed given)
         """
-        #self.Network = ['STUB']#{'STUB': 0}
         self.Network = []
         #setWeights = np.vectorize(lambda x: x.append(genFunc()))#septVigts
 
         for i in range (1, len(network_dimensions)):
             layer = []
             for neur in range (network_dimensions[i]):
-                layer.append(Neuron(network_dimensions[i-1],  genFunc))
+                layer.append(Neuron(network_dimensions[i-1],  genFunc, self.Activations[i-1]))
             self.Network.append(layer)
 
     def __str__(self):
@@ -55,20 +58,15 @@ class Net:
   
     def _evaluate(self, input, curr):
         if (curr == len(self.Network)):
-            return input
+            return input[1:]
         output = [1]
         for neur in self.Network[curr]:
             output.append(neur.Evaluate(input))
-            print(output)
-        return  self._evaluate(output, curr+1)
-       # self.kill
-       # for i in range (self.Network[curr+1]):
-       #     layer = self.Network[i]
-       #     for neur in range (len(layer)):
-       #         output.append(evaluate)
+            #print(output)
+        return self._evaluate(output, curr+1)
 
-
-   # def back_forth_prop
+   #def back_forth_prop:
+        #propoagate between CIF->E2->DC->four-corners-of-MC->M3->MC->repeat
 
     def _error(self, a, b):
         """
@@ -89,24 +87,8 @@ class Net:
         """
         return self.Network[depth]
 
-#Test
-n = Net([2, 3, 2, 3], [lambda x:1/(1+exp(-1*x)) for i in range(3)], lambda a:np.linalg.norm(a))#lambda a,b:abs(a-b))
-#n._backProp(3, 3)
-#n._backProp(4, 3)
+#Test(s)
+n = Net([2, 3, 2, 3], [lambda x:1/(1+exp(-1*x)) for i in range(3)], lambda a:np.linalg.norm(a))
 
-print(n._evaluate([1, 2, 2], 0))
-'''
-for l in n.Network:
-    for n in l:
-        print(n)
-    print("new layer")
-'''
-#
-# print(n.Activations)
-
-#neuron = Neuron(3, lambda: random.random())
-#neuron.printWeights()
-
-#print(numpy.subtract([2, 4, 2], [3, 2, 4]))
-#print(numpy.subtract(3, 4))
-#print(np.linalg.norm([3, 4]))
+print("output:", n._evaluate([1, 0, 0], 0))
+print_net(n)
