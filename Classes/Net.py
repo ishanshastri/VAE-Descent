@@ -10,7 +10,8 @@ class Neuron:
         self._initializeWeights(inp_dim, rng)
 
     def _initializeWeights(self, inp_dim, rng):
-        Weights = [rng() for i in range(inp_dim + 1)]
+        self.Weights = []
+        self.Weights = [rng() for i in range(inp_dim + 1)]
 
     def Evaluate(self, input):
         #w^x
@@ -74,8 +75,10 @@ n._backProp(4, 3)
 #print(n.Network)
 #print(n.Activations)
 
-neuron = Neuron()
+neuron = Neuron(3, lambda: random.random())
+print(neuron.Weights)
 
 #print(numpy.subtract([2, 4, 2], [3, 2, 4]))
 #print(numpy.subtract(3, 4))
 #print(np.linalg.norm([3, 4]))
+print(print(print("d")))
