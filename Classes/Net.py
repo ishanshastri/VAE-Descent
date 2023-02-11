@@ -33,7 +33,7 @@ class Neuron:
 class Net:
     Activations: callable
     Length: callable
-    Network: list()#dict
+    Network: list()
 
     def __init__(self, dimensions, activations, norm):
         self.Activations = activations
@@ -66,7 +66,7 @@ class Net:
         return self._evaluate(output, curr+1)
 
    #def back_forth_prop:
-        #propoagate back n forth between CIF->E2->DC->four-corners-of-MC->M3->MC->repeat
+        #propoagate back and forth between CIF->E2->DC->four-corners-of-MC->M3->MC->repeat
 
     def _error(self, a, b):
         """
@@ -88,7 +88,7 @@ class Net:
         return self.Network[depth]
 
 #Test(s)
-n = Net([2, 3, 2, 3], [lambda x:1/(1+exp(-1*x)) for i in range(3)], lambda a:np.linalg.norm(a))
+n = Net([2, 3, 2, 3, 5], [lambda x:1/(1+exp(-1*x)) for i in range(4)], lambda a:np.linalg.norm(a))
 
 print("output:", n._evaluate([1, 0, 0], 0))
 print_net(n)
