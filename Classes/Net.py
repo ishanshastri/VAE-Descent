@@ -134,7 +134,7 @@ class Net:
 sigmoid = lambda x:1/(1+exp(-1*x))
 d_dx_sigmoid = lambda x:sigmoid(x)*(1-sigmoid(x))
 #n = Net([2, 3, 2, 3, 5], [[sigmoid, d_dx_sigmoid] for i in range(4)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
-n = Net([2, 1, 1], [[sigmoid, d_dx_sigmoid] for i in range(2)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
+n = Net([2, 1, 1, 2], [[sigmoid, d_dx_sigmoid] for i in range(3)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
 
 res = n._evaluate([1, 1, 1])
 print("output:", res[0])
@@ -143,6 +143,11 @@ print("derivs: ", res[1])
 #print(n.GradientVector)
 bp = BackProp()
 bp.GetGrad(n, [], [], [])
+
+for d in res[1]:
+    print("L")
+    for p in d:
+        print(p)
 
 neur = Neuron(2, lambda : 1, [sigmoid, d_dx_sigmoid])
 #print(neur)
