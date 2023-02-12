@@ -105,7 +105,7 @@ class Net:
         """
         Get error between two datapoints
         """
-        return self.Length(np.subtract(a-b))#consider outsourcing subtract
+        return self.Length[0](np.subtract(a-b))#consider outsourcing subtract
 
     def _backProp(self, result, target):
         """
@@ -123,7 +123,7 @@ class Net:
 #Test(s)
 sigmoid = lambda x:1/(1+exp(-1*x))
 d_dx_sigmoid = lambda x:sigmoid(x)*(1-sigmoid(x))
-n = Net([2, 3, 2, 3, 5], [[sigmoid, d_dx_sigmoid] for i in range(4)], lambda a:np.linalg.norm(a))
+n = Net([2, 3, 2, 3, 5], [[sigmoid, d_dx_sigmoid] for i in range(4)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
 
 #print("output:", n._evaluate([1, 0, 0], 0))
 #print_net(n)
