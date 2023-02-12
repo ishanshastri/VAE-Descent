@@ -33,16 +33,15 @@ class Neuron:
     def _initializeWeights(self, inp_dim, rng):
         self.Weights = [rng() for i in range(inp_dim + 1)]
 
-    def Evaluate(self, input):
+    def Evaluate(self, input, input_roc=1):
         dotprod = np.dot(self.Weights, input)
         w_grads = []
         i_grads = []
         dim = len(self.Weights)
         for i in range(dim):
             w_grads.append(input[i]*self.Activation[1](dotprod))
-            i_grads.append(self.Weights[i]*self.Activation[1](dotprod))
+            i_grads.append(input_roc*self.Weights[i]*self.Activation[1](dotprod))
         return (self.Activation[0](dotprod), w_grads, i_grads)
-    
 
     def printWeights(self):
         print(self.Weights)
@@ -54,10 +53,17 @@ class Net:
     Activations: callable
     Length: callable
     Network: list()
+    GradientVector: list()
+
+    _numWeights: int
 
     def __init__(self, dimensions, activations, norm):
         self.Activations = activations
         self.Length = norm
+        self._numWeights=0
+        for d in dimensions[1:]:
+            self._numWeights+=(d+1)
+        #print(self._numWeights)
         self._initializeNet(dimensions)
 
     def _initializeNet(self, network_dimensions, seed=[], genFunc=lambda: random.random()):
@@ -65,6 +71,7 @@ class Net:
         initialize network (randomly if no seed given)
         """
         self.Network = []
+        self.GradientVector = []#[0 for i in range(self._numWeights)]
         #setWeights = np.vectorize(lambda x: x.append(genFunc()))#septVigts
 
         for i in range (1, len(network_dimensions)):
@@ -76,16 +83,19 @@ class Net:
     def __str__(self):
         return str(self.Network)
   
-    def _evaluate(self, input, curr):
+    def _evaluate(self, input, curr=0, weight_count=0):
         if (curr == len(self.Network)):
             return input[1:]
         output = [1]
         for neur in self.Network[curr]:
-            output.append(neur.Evaluate(input)[0])
+            res = neur.Evaluate(input)
+            self.GradientVector.extend(res[1])
+            output.append(res[0])
             #print(output)
+
         return self._evaluate(output, curr+1)
 
-    #def _getNumWeights(self):
+    #def _numWeights(self):
     #    return np.sum(self.Dimensions)
 
    #def back_forth_prop:
@@ -117,10 +127,10 @@ n = Net([2, 3, 2, 3, 5], [[sigmoid, d_dx_sigmoid] for i in range(4)], lambda a:n
 
 #print("output:", n._evaluate([1, 0, 0], 0))
 #print_net(n)
-
+print(n.GradientVector)
 bp = BackProp()
 bp.GetGrad(n, [], [], [])
 
 neur = Neuron(2, lambda : 1, [sigmoid, d_dx_sigmoid])
-print(neur)
+#print(neur)
 print(neur.Evaluate([1, 1, 1]))
