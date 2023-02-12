@@ -33,14 +33,16 @@ class Neuron:
     def _initializeWeights(self, inp_dim, rng):
         self.Weights = [rng() for i in range(inp_dim + 1)]
 
-    def Evaluate(self, input, input_roc=1):
+    def Evaluate(self, input, input_roc=[]):#input_roc might be redundant (monkey moment(s))
         dotprod = np.dot(self.Weights, input)
         w_grads = []
         i_grads = []
         dim = len(self.Weights)
+        if input_roc==[]:
+            input_roc = [1 for i in range(dim)]
         for i in range(dim):
             w_grads.append(input[i]*self.Activation[1](dotprod))
-            i_grads.append(input_roc*self.Weights[i]*self.Activation[1](dotprod))
+            i_grads.append(input_roc[i]*self.Weights[i]*self.Activation[1](dotprod))
         return (self.Activation[0](dotprod), w_grads, i_grads)
 
     def printWeights(self):
@@ -83,17 +85,20 @@ class Net:
     def __str__(self):
         return str(self.Network)
   
-    def _evaluate(self, input, curr=0, weight_count=0):
+    def _evaluate(self, input, curr=0, derivs=[]):
         if (curr == len(self.Network)):
-            return input[1:]
+            return (input[1:], derivs)
         output = [1]
+        partials = []
+
         for neur in self.Network[curr]:
             res = neur.Evaluate(input)
-            self.GradientVector.extend(res[1])
+            #self.GradientVector.extend(res[1])
             output.append(res[0])
-            #print(output)
+            partials.append((res[1], res[2]))
 
-        return self._evaluate(output, curr+1)
+        derivs.append(partials)
+        return self._evaluate(output, curr+1, derivs)
 
     #def _numWeights(self):
     #    return np.sum(self.Dimensions)
@@ -107,11 +112,16 @@ class Net:
         """
         return self.Length[0](np.subtract(a-b))#consider outsourcing subtract
 
-    def _backProp(self, result, target):
+    def _backProp(self, input, target):
         """
         backpropogate errors through network recursively, update weights
         """
-        self.Network.append('backpropped (!)')
+        #self.Network.append('backpropped (!)') A+ implementation
+        result = self._evaluate(input)
+        err = self._error(result, target)
+        print(err)
+
+    #def _calcGrad()
 
     #Publics
     def GetLayer(self, depth):
@@ -123,14 +133,19 @@ class Net:
 #Test(s)
 sigmoid = lambda x:1/(1+exp(-1*x))
 d_dx_sigmoid = lambda x:sigmoid(x)*(1-sigmoid(x))
-n = Net([2, 3, 2, 3, 5], [[sigmoid, d_dx_sigmoid] for i in range(4)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
+#n = Net([2, 3, 2, 3, 5], [[sigmoid, d_dx_sigmoid] for i in range(4)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
+n = Net([2, 1, 1], [[sigmoid, d_dx_sigmoid] for i in range(2)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
 
-#print("output:", n._evaluate([1, 0, 0], 0))
+res = n._evaluate([1, 1, 1])
+print("output:", res[0])
+print("derivs: ", res[1])
 #print_net(n)
-print(n.GradientVector)
+#print(n.GradientVector)
 bp = BackProp()
 bp.GetGrad(n, [], [], [])
 
 neur = Neuron(2, lambda : 1, [sigmoid, d_dx_sigmoid])
 #print(neur)
-print(neur.Evaluate([1, 1, 1]))
+#print(neur.Evaluate([1, 1, 1])[0])
+
+#print(neur.Evaluate([1, 1, 1])[1])
