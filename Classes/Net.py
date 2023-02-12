@@ -112,14 +112,24 @@ class Net:
         """
         return self.Length[0](np.subtract(a-b))#consider outsourcing subtract
 
-    def _backProp(self, input, target):
+    def _backProp(self, input, target, prev=[]):#target includes the 1
         """
         backpropogate errors through network recursively, update weights
         """
         #self.Network.append('backpropped (!)') A+ implementation
+        #neurror
+
+        self.GradientVector = []
         result = self._evaluate(input)
         err = self._error(result, target)
         print(err)
+        layers = len(result[1])
+        if prev==[]:
+            prev = [1 for i in range(len(target))]
+        for i in range(layers-1, -1, -1):
+            for neur in result[1][i]:
+                for weight in range(len(result[1][i][0])):
+                    self.GradientVector.append()
 
     #def _calcGrad()
 
