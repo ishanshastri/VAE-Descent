@@ -144,7 +144,7 @@ class Net:
 sigmoid = lambda x:1/(1+exp(-1*x))
 d_dx_sigmoid = lambda x:sigmoid(x)*(1-sigmoid(x))
 #n = Net([2, 3, 2, 3, 5], [[sigmoid, d_dx_sigmoid] for i in range(4)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
-n = Net([2, 1, 1, 2], [[sigmoid, d_dx_sigmoid] for i in range(3)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
+n = Net([2, 1, 1, 2], [[sigmoid, d_dx_sigmoid] for i in range(2)] + [[lambda x:x, lambda x:1]], [lambda a:np.linalg.norm(a), lambda a: 2*a])
 
 res = n._evaluate([1, 1, 1])
 print("output:", res[0])
@@ -164,3 +164,12 @@ neur = Neuron(2, lambda : 1, [sigmoid, d_dx_sigmoid])
 #print(neur.Evaluate([1, 1, 1])[0])
 
 #print(neur.Evaluate([1, 1, 1])[1])
+'''
+L
+([0.21646371070662088, 0.21646371070662088, 0.21646371070662088], [0.023298310088874834, 0.06017903508249897, 0.08280784850208056])
+L
+([0.18530551108987986, 0.12658759816004056], [0.16858080135412962, 0.05756391367055788])
+L
+([0.2232145669668299, 0.16838215712831228], [0.09444668972928201, 0.07591037060305607])
+([0.2028502258481585, 0.15302029373089238], [0.07658835468975284, 0.1486404021046774])
+'''
