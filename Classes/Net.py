@@ -54,7 +54,7 @@ class Neuron:
 class CostNeuron(Neuron):
     def Evaluate(self, input, target, input_roc=[]):
         tot = 0
-        for i in range(input):
+        for i in range(len(input)):
             tot += target[i]-input[i]
         deriv = 2*(tot)
         return [np.linalg.norm(np.subtract(input, target)), tot] 
@@ -178,6 +178,8 @@ def b_prop(res, layers):
 b_prop(res, 3)
 
 neur = Neuron(2, lambda : 1, [sigmoid, d_dx_sigmoid])
+c_neur = CostNeuron(3,  lambda : 1, [sigmoid, d_dx_sigmoid])#fix params
+print(c_neur.Evaluate([1, 2, 2], [1, 2, 3]))
 #print(neur)
 #print(neur.Evaluate([1, 1, 1])[0])
 
