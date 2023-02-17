@@ -51,6 +51,15 @@ class Neuron:
     def __str__(self):
         return str(self.Weights)
 
+class CostNeuron(Neuron):
+    def Evaluate(self, input, target, input_roc=[]):
+        tot = 0
+        for i in range(input):
+            tot += target[i]-input[i]
+        deriv = 2*(tot)
+        return [np.linalg.norm(np.subtract(input, target)), tot] 
+        #Generalize (abstract it)
+
 class Net:
     Activations: callable
     Length: callable
@@ -81,6 +90,8 @@ class Net:
             for neur in range (network_dimensions[i]):
                 layer.append(Neuron(network_dimensions[i-1],  genFunc, self.Activations[i-1]))
             self.Network.append(layer)
+        #Append cost layer
+        #c_neur = Neuron(2, None, None, True)
 
     def __str__(self):
         return str(self.Network)
@@ -158,6 +169,13 @@ for d in res[1]:
     print("L")
     for p in d:
         print(p)
+
+def b_prop(res, layers):
+    ind = layers-1
+    layer = res[1][ind]
+    
+
+b_prop(res, 3)
 
 neur = Neuron(2, lambda : 1, [sigmoid, d_dx_sigmoid])
 #print(neur)
