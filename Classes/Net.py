@@ -141,7 +141,8 @@ class Net:
             for neur in result[1][i]:
                 for weight in range(len(result[1][i][0])):
                     self.GradientVector.append()
-
+    def _backProp_n(self, input, target):
+        pass
     #def _calcGrad()
 
     #Publics
@@ -159,7 +160,7 @@ n = Net([2, 1, 1, 2], [[sigmoid, d_dx_sigmoid] for i in range(2)] + [[lambda x:x
 
 res = n._evaluate([1, 1, 1])
 print("output:", res[0])
-print("derivs: ", res[1])
+#print("derivs: ", res[1])
 #print_net(n)
 #print(n.GradientVector)
 bp = BackProp()
@@ -179,7 +180,7 @@ b_prop(res, 3)
 
 neur = Neuron(2, lambda : 1, [sigmoid, d_dx_sigmoid])
 c_neur = CostNeuron(3,  lambda : 1, [sigmoid, d_dx_sigmoid])#fix params
-print(c_neur.Evaluate([1, 2, 2], [1, 2, 3]))
+print("Eval_Result: ", c_neur.Evaluate([1, 2, 2], [1, 2, 3]))
 #print(neur)
 #print(neur.Evaluate([1, 1, 1])[0])
 
