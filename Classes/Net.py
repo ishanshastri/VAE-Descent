@@ -141,9 +141,18 @@ class Net:
             for neur in result[1][i]:
                 for weight in range(len(result[1][i][0])):
                     self.GradientVector.append()
-    def _backProp_n(self, input, target):
-        pass
+
+    def _backProp_n(self, output, target, blayer = 0, prev = []):#prev is partial derivs of cost function w.r.t. last layer output
+        local_partials_d_dw = output[1][0]
+        local_partials_d_do = output[1][1]
+        cur_grads = [local_partials_d_dw[i]*prev[i] for i in range(len(prev))]
+        #next_grads = [not me]
     #def _calcGrad()
+
+    def _getCost(self, a, b):
+        diff = np.subtract(a, b)
+        grad = [self.Length[1](diff[i]) for i in range(len(diff))]
+        return [self.Length[0](diff), grad]
 
     #Publics
     def GetLayer(self, depth):
@@ -194,3 +203,5 @@ L
 ([0.2232145669668299, 0.16838215712831228], [0.09444668972928201, 0.07591037060305607])
 ([0.2028502258481585, 0.15302029373089238], [0.07658835468975284, 0.1486404021046774])
 '''
+
+print(n._getCost([1, 0, 0], [2, 0, 0]))
