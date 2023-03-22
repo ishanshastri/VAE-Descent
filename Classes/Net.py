@@ -154,6 +154,32 @@ class Net:
         grad = [self.Length[1](diff[i]) for i in range(len(diff))]
         return [self.Length[0](diff), grad]
 
+    def _susser(self, output, layer, out_d_d, grad):
+        if layer<0:
+            return grad
+        cur_grads = []
+        cur_grads = np.empty(len(output[1][layer])*len(output[1][layer][0][0]))
+        l = output[1][layer]
+        for i in range(l):
+            neuron = l[i]
+            print(neuron)
+            d_dw = neuron[0] #derivs wrt weights
+            d_dx = neuron[1] #derivs wrt inputs
+            
+            cur_grads += [out_d_d[i]*d_dw[j] for j in range(d_dw)]
+            out_ds += 
+
+        out_ds = 
+
+            d_dw = l[0]
+            d_dx = l[1]
+
+
+
+        #cur_grads = [d_dw[i]*out_d_d[i] for i in range(len(d_dw))]
+
+        #cur_grads = []
+
     #Publics
     def GetLayer(self, depth):
         """
@@ -204,4 +230,4 @@ L
 ([0.2028502258481585, 0.15302029373089238], [0.07658835468975284, 0.1486404021046774])
 '''
 
-print(n._getCost([1, 0, 0], [2, 0, 0]))
+print(n._getCost([0, 1, 0], [1, 0, 0]))#output, target
