@@ -97,6 +97,7 @@ class Net:
         return str(self.Network)
   
     def _evaluate(self, input, curr=0, derivs=[]):
+        print(curr)
         if (curr == len(self.Network)):
             return (input[1:], derivs)
         output = [1]
@@ -149,8 +150,8 @@ class Net:
         #next_grads = [not me]
     #def _calcGrad()
 
-    def _getCost(self, a, b):
-        diff = np.subtract(a, b)
+    def _getCost(self, hypo, target):
+        diff = np.subtract(hypo, target)
         grad = [self.Length[1](diff[i]) for i in range(len(diff))]
         return [self.Length[0](diff), grad]
 
@@ -158,21 +159,31 @@ class Net:
         if layer<0:
             return grad
         cur_grads = []
-        cur_grads = np.empty(len(output[1][layer])*len(output[1][layer][0][0]))
+        cur_grads = []#np.empty(len(output[1][layer])*len(output[1][layer][0][0]))
         l = output[1][layer]
-        for i in range(l):
+        prev_outs = [0 for i in range(len(l))]
+        for i in range(len(l)): #loop thru each neuron in layer 
             neuron = l[i]
-            print(neuron)
+            #print(neuron)
             d_dw = neuron[0] #derivs wrt weights
             d_dx = neuron[1] #derivs wrt inputs
-            
-            cur_grads += [out_d_d[i]*d_dw[j] for j in range(d_dw)]
-            out_ds += 
+            #d_outs = out_d_d[1]
+            #print("doubts:", d_outs)
+            #for j in range(len(d_dw)):
+            #cur_grads = cur_grads + [out_d_d[i]*d_dw[j] for j in range(d_dw)]
+            temp_outs = []
+            for j in range(len(d_dw)):
+                cur_grads.append(out_d_d[i]*d_dw[j])
+                temp_outs.append(out_d_d[i]*d_dx[j])
+            #temp_outs += [out_d_d[i]*d_dx[j] for j in range(d_dx)]
+            prev_outs = np.add(prev_outs, temp_outs)
+            #cur_grads = np.add(cur_grads, )
+            #out_ds += 
+        return self._susser(output, layer-1, prev_outs, grad + cur_grads)
+        #out_ds = 
 
-        out_ds = 
-
-            d_dw = l[0]
-            d_dx = l[1]
+           # d_dw = l[0]
+           # d_dx = l[1]
 
 
 
@@ -186,7 +197,7 @@ class Net:
         Get layer at given depth
         """
         return self.Network[depth]
-
+'''
 #Test(s)
 sigmoid = lambda x:1/(1+exp(-1*x))
 d_dx_sigmoid = lambda x:sigmoid(x)*(1-sigmoid(x))
@@ -194,7 +205,7 @@ d_dx_sigmoid = lambda x:sigmoid(x)*(1-sigmoid(x))
 n = Net([2, 1, 1, 2], [[sigmoid, d_dx_sigmoid] for i in range(2)] + [[lambda x:x, lambda x:1]], [lambda a:np.linalg.norm(a), lambda a: 2*a])
 
 res = n._evaluate([1, 1, 1])
-print("output:", res[0])
+
 #print("derivs: ", res[1])
 #print_net(n)
 #print(n.GradientVector)
@@ -215,11 +226,12 @@ b_prop(res, 3)
 
 neur = Neuron(2, lambda : 1, [sigmoid, d_dx_sigmoid])
 c_neur = CostNeuron(3,  lambda : 1, [sigmoid, d_dx_sigmoid])#fix params
-print("Eval_Result: ", c_neur.Evaluate([1, 2, 2], [1, 2, 3]))
+#print("Eval_Result: ", c_neur.Evaluate([1, 2, 2], [1, 2, 3]))
 #print(neur)
 #print(neur.Evaluate([1, 1, 1])[0])
 
 #print(neur.Evaluate([1, 1, 1])[1])
+'''
 '''
 L
 ([0.21646371070662088, 0.21646371070662088, 0.21646371070662088], [0.023298310088874834, 0.06017903508249897, 0.08280784850208056])
@@ -229,5 +241,34 @@ L
 ([0.2232145669668299, 0.16838215712831228], [0.09444668972928201, 0.07591037060305607])
 ([0.2028502258481585, 0.15302029373089238], [0.07658835468975284, 0.1486404021046774])
 '''
+'''
 
-print(n._getCost([0, 1, 0], [1, 0, 0]))#output, target
+#print(n._getCost([0, 1, 0], [1, 0, 0]))#output, target
+#cost = n._getCost()
+print("output:", res[0])
+print("target:", [1, 1])
+print("gradient: ", n._susser(res, 2, n._getCost(res[0], [1, 1])[1], []))
+'''
+t_net = Net([1, 1, 1, 1], [[lambda x:x, lambda x:1] for i in range(3)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
+r1 = t_net._evaluate([1, 2]) #input of 2 (1 is bias), -> we want output 4 (trying to recreate *2 function)
+print("Layers:")
+for l in t_net.Network:
+    print("L")
+    for n in l:
+        print(n)
+print("Derivs:")
+for d in r1[1]:
+    print("L")
+    for p in d:
+        print(p)
+#print("layers: ", len(r1[1]))
+#print("layers?: ", len(t_net.Network))
+cost = t_net._getCost(r1[0], 4) #tuple of cost and deriv wrt input
+grad = t_net._susser(r1, 2, cost[1], [])
+
+print("out: ", r1[0])
+print("target: ", 4)
+print("cost: ", cost[0])
+print("grad: (not me)", grad)
+
+
