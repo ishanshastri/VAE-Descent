@@ -97,7 +97,7 @@ class Net:
         return str(self.Network)
   
     def _evaluate(self, input, curr=0, derivs=[]):
-        print(curr)
+        #print(curr)
         if (curr == len(self.Network)):
             return (input[1:], derivs)
         output = [1]
@@ -175,6 +175,8 @@ class Net:
             for j in range(len(d_dw)):
                 cur_grads.append(out_d_d[i]*d_dw[j])
                 temp_outs.append(out_d_d[i]*d_dx[j])
+                #update weights right here (?)
+                self.Network[layer][i].Weights[j] -= out_d_d[i]*d_dw[j]*0.03
             #temp_outs += [out_d_d[i]*d_dx[j] for j in range(d_dx)]
             prev_outs = np.add(prev_outs, temp_outs)
             #cur_grads = np.add(cur_grads, )
@@ -265,10 +267,35 @@ for d in r1[1]:
 #print("layers?: ", len(t_net.Network))
 cost = t_net._getCost(r1[0], 4) #tuple of cost and deriv wrt input
 grad = t_net._susser(r1, 2, cost[1], [])
-
+normalized_g = grad/np.linalg.norm(grad)
 print("out: ", r1[0])
 print("target: ", 4)
 print("cost: ", cost[0])
 print("grad: (not me)", grad)
+print("normalized: ", normalized_g)
+print("New Layers:")
+for l in t_net.Network:
+    print("L")
+    for n in l:
+        print(n)
+r2 = t_net._evaluate([1, 2])
+cost = t_net._getCost(r2[0], 4) #tuple of cost and deriv wrt input
+grad = t_net._susser(r2, 2, cost[1], [])
+r3 = t_net._evaluate([1, 2])
+cost = t_net._getCost(r3[0], 4) #tuple of cost and deriv wrt input
+grad = t_net._susser(r3, 2, cost[1], [])
+r4 = t_net._evaluate([1, 2])
+
+print("new: ", r2[0])
+print("newer: ", r3[0])
+print("newer still: ", r4[0])
+
+for i in range(100):
+    r = t_net._evaluate([1, 2])
+    print("#", i, r[0])
+    cost = t_net._getCost(r[0], 4) #tuple of cost and deriv wrt input
+    grad = t_net._susser(r, 2, cost[1], [])
+#for l in t_net.Network:
+
 
 
