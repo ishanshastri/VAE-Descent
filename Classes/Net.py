@@ -251,7 +251,7 @@ print("output:", res[0])
 print("target:", [1, 1])
 print("gradient: ", n._susser(res, 2, n._getCost(res[0], [1, 1])[1], []))
 '''
-t_net = Net([1, 1, 1, 1], [[lambda x:x, lambda x:1] for i in range(3)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
+t_net = Net([1, 1, 2, 1], [[lambda x:x, lambda x:1] for i in range(3)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
 r1 = t_net._evaluate([1, 2]) #input of 2 (1 is bias), -> we want output 4 (trying to recreate *2 function)
 print("Layers:")
 for l in t_net.Network:
