@@ -176,7 +176,9 @@ class Net:
                 cur_grads.append(out_d_d[i]*d_dw[j])
                 temp_outs.append(out_d_d[i]*d_dx[j])
                 #update weights right here (?)
-                self.Network[layer][i].Weights[j] -= out_d_d[i]*d_dw[j]*0.03
+                #print(out_d_d[i]*d_dw[j])
+                self.Network[layer][i].Weights[j] -= out_d_d[i]*d_dw[j]*0.03#xp(-1*out_d_d[i]*d_dw[j])
+                #self.Network[layer][i].Weights[j] -= out_d_d[i]*d_dw[j]*0.03
             #temp_outs += [out_d_d[i]*d_dx[j] for j in range(d_dx)]
             prev_outs = np.add(prev_outs, temp_outs)
             #cur_grads = np.add(cur_grads, )
@@ -291,11 +293,14 @@ print("newer: ", r3[0])
 print("newer still: ", r4[0])
 
 for i in range(100):
-    r = t_net._evaluate([1, 2])
+    #input = np.random.randint(1, 30)
+    r = t_net._evaluate([1, 8])#input])
     print("#", i, r[0])
-    cost = t_net._getCost(r[0], 4) #tuple of cost and deriv wrt input
+    cost = t_net._getCost(r[0], 16) #tuple of cost and deriv wrt input
     grad = t_net._susser(r, 2, cost[1], [])
 #for l in t_net.Network:
+
+print(t_net._evaluate([1, 3])[0])
 
 
 
