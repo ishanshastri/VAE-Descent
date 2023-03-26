@@ -156,13 +156,13 @@ class Net:
         grad = [self.Length[1](diff[i]) for i in range(len(diff))]
         return [self.Length[0](diff), grad]
 
-    def _susser(self, output, layer, out_d_d, grad, l_rate = 0.03, lionless = 0):
+    def _susser(self, output, layer, out_d_d, grad, l_rate = 0.03, lionless = False):
         if layer<0:
             return grad
         cur_grads = []
         cur_grads = []#np.empty(len(output[1][layer])*len(output[1][layer][0][0]))
         l = output[1][layer]
-        prev_outs = [0 for i in range(len(l))]
+        prev_outs = [0 for i in range(len(l[0][0]))]
         for i in range(len(l)): #loop thru each neuron in layer 
             neuron = l[i]
             #print(neuron)
@@ -185,7 +185,9 @@ class Net:
                     lion = -1
                 elif out_d_d[i]*d_dw[j] > 0:
                     lion = 1
-                lion += out_d_d[i]*d_dw[j]*lionless
+                #lion += out_d_d[i]*d_dw[j]*lionless
+                if lionless:
+                    lion = out_d_d[i]*d_dw[j]
                 self.Network[layer][i].Weights[j] -= lion*l_rate
             #temp_outs += [out_d_d[i]*d_dx[j] for j in range(d_dx)]
             prev_outs = np.add(prev_outs, temp_outs)
@@ -261,7 +263,7 @@ print("output:", res[0])
 print("target:", [1, 1])
 print("gradient: ", n._susser(res, 2, n._getCost(res[0], [1, 1])[1], []))
 '''
-t_net = Net([1, 1, 1, 1], [[lambda x:x, lambda x:1] for i in range(3)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
+t_net = Net([1, 1, 2, 4, 1], [[lambda x:x, lambda x:1] for i in range(4)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
 r1 = t_net._evaluate([1, 2]) #input of 2 (1 is bias), -> we want output 4 (trying to recreate *2 function)
 print("Layers:")
 for l in t_net.Network:
@@ -275,6 +277,7 @@ for d in r1[1]:
         print(p)
 #print("layers: ", len(r1[1]))
 #print("layers?: ", len(t_net.Network))
+'''
 cost = t_net._getCost(r1[0], 4) #tuple of cost and deriv wrt input
 grad = t_net._susser(r1, 2, cost[1], [])
 normalized_g = grad/np.linalg.norm(grad)
@@ -299,16 +302,25 @@ r4 = t_net._evaluate([1, 2])
 print("new: ", r2[0])
 print("newer: ", r3[0])
 print("newer still: ", r4[0])
-
+'''
 costs = []
 results = []
-for i in range(100):
+mini = None
+for i in range(5000):
     input = np.random.randint(1, 100)
     r = t_net._evaluate([1, input])#input])
     #print("#", i, r[0])
     cost = t_net._getCost(r[0], 2*input) #tuple of cost and deriv wrt input
     costs.append(abs(cost[0]))
-    grad = t_net._susser(r, 2, cost[1], [], (1.0/(i+2)), i) #result, starting layer #, cost deriv
+    if mini == None or mini > cost[0]:
+        mini = cost[0]
+    if i > 500 and abs(cost[0]) < min(0.05, mini):
+        break
+    #grad = t_net._susser(r, 2, cost[1], [], (1.0/(i+2)), i) #result, starting layer #, cost deriv
+    l = False
+    if i > 100:
+        l = True
+    grad = t_net._susser(r, 3, cost[1], [], (1.0/(i+2))) #result, starting layer #, cost deriv
     results.append(r)
 #for l in t_net.Network:
 #print(costs)
