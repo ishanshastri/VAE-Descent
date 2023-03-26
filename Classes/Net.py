@@ -263,7 +263,7 @@ print("output:", res[0])
 print("target:", [1, 1])
 print("gradient: ", n._susser(res, 2, n._getCost(res[0], [1, 1])[1], []))
 '''
-t_net = Net([1, 1, 2, 4, 1], [[lambda x:x, lambda x:1] for i in range(4)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
+t_net = Net([1, 1, 2, 1], [[lambda x:x, lambda x:1] for i in range(3)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
 r1 = t_net._evaluate([1, 2]) #input of 2 (1 is bias), -> we want output 4 (trying to recreate *2 function)
 print("Layers:")
 for l in t_net.Network:
@@ -306,7 +306,7 @@ print("newer still: ", r4[0])
 costs = []
 results = []
 mini = None
-for i in range(5000):
+for i in range(100):
     input = np.random.randint(1, 100)
     r = t_net._evaluate([1, input])#input])
     #print("#", i, r[0])
@@ -320,7 +320,7 @@ for i in range(5000):
     l = False
     if i > 100:
         l = True
-    grad = t_net._susser(r, 3, cost[1], [], (1.0/(i+2))) #result, starting layer #, cost deriv
+    grad = t_net._susser(r, 2, cost[1], [], (1.0/(i+2))) #result, starting layer #, cost deriv
     results.append(r)
 #for l in t_net.Network:
 #print(costs)
@@ -331,5 +331,21 @@ print("cost: ", costs[len(costs)-1])
 
 plt.plot(costs)
 plt.show()
+costs = []
+net_2 = t_net = Net([1, 4, 4, 4, 7, 3, 1], [[lambda x:x, lambda x:1] for i in range(6)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
+for i in range(10000):
+    input = np.random.randint(1, 1000) #2
+    r = net_2._evaluate([1, input])#input])
+    cost = net_2._getCost(r[0], 2*input) #tuple of cost and deriv wrt input
+    if i > 500 and abs(cost[0]) < 0.0015:
+        break
+    costs.append(abs(cost[0]))
+    grad = net_2._susser(r, 2, cost[1], [], (1.0/(i+2))) #result, starting layer #, cost deriv
+print(net_2._evaluate([1, 8])[0])
+print(net_2._evaluate([1, 3])[0])
+print("cost: ", costs[len(costs)-1])
+plt.plot(costs)
+plt.show()
 
-
+sigmoid = lambda x:1/(1+exp(-1*x))
+d_dx_sigmoid = lambda x:sigmoid(x)*(1-sigmoid(x))
