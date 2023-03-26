@@ -1,6 +1,7 @@
 import numpy as np
 from math import exp
 import random
+import matplotlib.pyplot as plt
 
 def print_net(n):
     print("================")
@@ -155,7 +156,7 @@ class Net:
         grad = [self.Length[1](diff[i]) for i in range(len(diff))]
         return [self.Length[0](diff), grad]
 
-    def _susser(self, output, layer, out_d_d, grad):
+    def _susser(self, output, layer, out_d_d, grad, l_rate = 0.03, lionless = 0):
         if layer<0:
             return grad
         cur_grads = []
@@ -177,8 +178,15 @@ class Net:
                 temp_outs.append(out_d_d[i]*d_dx[j])
                 #update weights right here (?)
                 #print(out_d_d[i]*d_dw[j])
-                self.Network[layer][i].Weights[j] -= out_d_d[i]*d_dw[j]*0.03#xp(-1*out_d_d[i]*d_dw[j])
+                #self.Network[layer][i].Weights[j] -= out_d_d[i]*d_dw[j]*0.03#xp(-1*out_d_d[i]*d_dw[j])
                 #self.Network[layer][i].Weights[j] -= out_d_d[i]*d_dw[j]*0.03
+                lion = 0
+                if out_d_d[i]*d_dw[j] < 0:
+                    lion = -1
+                elif out_d_d[i]*d_dw[j] > 0:
+                    lion = 1
+                lion += out_d_d[i]*d_dw[j]*lionless
+                self.Network[layer][i].Weights[j] -= lion*l_rate
             #temp_outs += [out_d_d[i]*d_dx[j] for j in range(d_dx)]
             prev_outs = np.add(prev_outs, temp_outs)
             #cur_grads = np.add(cur_grads, )
@@ -292,15 +300,24 @@ print("new: ", r2[0])
 print("newer: ", r3[0])
 print("newer still: ", r4[0])
 
+costs = []
+results = []
 for i in range(100):
-    #input = np.random.randint(1, 30)
-    r = t_net._evaluate([1, 8])#input])
-    print("#", i, r[0])
-    cost = t_net._getCost(r[0], 16) #tuple of cost and deriv wrt input
-    grad = t_net._susser(r, 2, cost[1], [])
+    input = np.random.randint(1, 100)
+    r = t_net._evaluate([1, input])#input])
+    #print("#", i, r[0])
+    cost = t_net._getCost(r[0], 2*input) #tuple of cost and deriv wrt input
+    costs.append(abs(cost[0]))
+    grad = t_net._susser(r, 2, cost[1], [], (1.0/(i+2)), i) #result, starting layer #, cost deriv
+    results.append(r)
 #for l in t_net.Network:
-
+#print(costs)
+print(t_net._evaluate([1, 8])[0])
 print(t_net._evaluate([1, 3])[0])
+#print(results[len(results)-1][0])
+print("cost: ", costs[len(costs)-1])
 
+plt.plot(costs)
+plt.show()
 
 
