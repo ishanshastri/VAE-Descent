@@ -347,5 +347,21 @@ print("cost: ", costs[len(costs)-1])
 plt.plot(costs)
 plt.show()
 
+#deep activatiosn
 sigmoid = lambda x:1/(1+exp(-1*x))
 d_dx_sigmoid = lambda x:sigmoid(x)*(1-sigmoid(x))
+
+net_3 = t_net = Net([1, 4, 4, 4, 7, 3, 1], [[sigmoid, d_dx_sigmoid] for i in range(3)] + [[lambda x:x, lambda x:1] for i in range(3)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
+for i in range(10000):
+    input = np.random.randint(1, 1000) #2
+    r = net_2._evaluate([1, input])#input])
+    cost = net_3._getCost(r[0], 2*input) #tuple of cost and deriv wrt input
+    if i > 500 and abs(cost[0]) < 0.0015:
+        break
+    costs.append(abs(cost[0]))
+    grad = net_3._susser(r, 2, cost[1], [], (1.0/(i+2))) #result, starting layer #, cost deriv
+print(net_3._evaluate([1, 8])[0])
+print(net_3._evaluate([1, 3])[0])
+print("cost: ", costs[len(costs)-1])
+plt.plot(costs)
+plt.show()
