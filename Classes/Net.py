@@ -304,6 +304,8 @@ print("newer: ", r3[0])
 print("newer still: ", r4[0])
 '''
 costs = []
+c1s = []
+c2s = []
 results = []
 mini = None
 for i in range(100):
@@ -328,9 +330,9 @@ print(t_net._evaluate([1, 8])[0])
 print(t_net._evaluate([1, 3])[0])
 #print(results[len(results)-1][0])
 print("cost: ", costs[len(costs)-1])
-
-plt.plot(costs)
-plt.show()
+#c1s = costs
+plt.plot(costs, 'g')
+#plt.show()
 costs = []
 net_2 = t_net = Net([1, 4, 4, 4, 7, 3, 1], [[lambda x:x, lambda x:1] for i in range(6)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
 for i in range(10000):
@@ -344,8 +346,8 @@ for i in range(10000):
 print(net_2._evaluate([1, 8])[0])
 print(net_2._evaluate([1, 3])[0])
 print("cost: ", costs[len(costs)-1])
-plt.plot(costs)
-plt.show()
+plt.plot(costs, 'b')
+#plt.show()
 
 #deep activatiosn
 sigmoid = lambda x:1/(1+exp(-1*x))
@@ -363,5 +365,5 @@ for i in range(10000):
 print(net_3._evaluate([1, 8])[0])
 print(net_3._evaluate([1, 3])[0])
 print("cost: ", costs[len(costs)-1])
-plt.plot(costs)
+plt.plot(costs, 'r')
 plt.show()
