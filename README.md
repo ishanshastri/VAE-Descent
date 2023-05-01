@@ -10,3 +10,4 @@ TODOs:
 - Batch Normalization 
 - Stochastic Gradient Descent
 - Batch Gradient Descent 
+- Drop-out, Bagging and Boosting + capability for implementing other performance enhancements
