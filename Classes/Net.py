@@ -11,9 +11,6 @@ def print_net(n):
             print(n)
     print("================")
 
-#s = Sigmoid()
-#print(s.Derivative(0))
-#============================================================================
 class BackProp:
     def __init__(self) -> None:
         pass
@@ -52,14 +49,7 @@ class Neuron:
     def __str__(self):
         return str(self.Weights)
 
-class CostNeuron(Neuron):
-    def Evaluate(self, input, target, input_roc=[]):
-        tot = 0
-        for i in range(len(input)):
-            tot += target[i]-input[i]
-        deriv = 2*(tot)
-        return [np.linalg.norm(np.subtract(input, target)), tot] 
-        #Generalize (abstract it)
+
 
 class Net:
     Activations: callable
@@ -125,12 +115,10 @@ class Net:
         """
         return self.Length[0](np.subtract(a-b))#consider outsourcing subtract
 
-    def _backProp(self, input, target, prev=[]):#target includes the 1
+    def _backProp_(self, input, target, prev=[]):#target includes the 1
         """
         backpropogate errors through network recursively, update weights
         """
-        #self.Network.append('backpropped (!)') A+ implementation
-        #neurror
 
         self.GradientVector = []
         result = self._evaluate(input)
@@ -148,38 +136,30 @@ class Net:
         local_partials_d_dw = output[1][0]
         local_partials_d_do = output[1][1]
         cur_grads = [local_partials_d_dw[i]*prev[i] for i in range(len(prev))]
-        #next_grads = [not me]
-    #def _calcGrad()
 
     def _getCost(self, hypo, target):
         diff = np.subtract(hypo, target)
         grad = [self.Length[1](diff[i]) for i in range(len(diff))]
         return [self.Length[0](diff), grad]
 
-    def _susser(self, output, layer, out_d_d, grad, l_rate = 0.03, lionless = False):
+    def BackProp(self, output, layer, out_d_d, grad, l_rate = 0.03, lionless = False):
         if layer<0:
             return grad
         cur_grads = []
-        cur_grads = []#np.empty(len(output[1][layer])*len(output[1][layer][0][0]))
+        cur_grads = []
         l = output[1][layer]
         prev_outs = [0 for i in range(len(l[0][0]))]
         for i in range(len(l)): #loop thru each neuron in layer 
             neuron = l[i]
-            #print(neuron)
             d_dw = neuron[0] #derivs wrt weights
             d_dx = neuron[1] #derivs wrt inputs
-            #d_outs = out_d_d[1]
-            #print("doubts:", d_outs)
-            #for j in range(len(d_dw)):
-            #cur_grads = cur_grads + [out_d_d[i]*d_dw[j] for j in range(d_dw)]
+
             temp_outs = []
             for j in range(len(d_dw)):
                 cur_grads.append(out_d_d[i]*d_dw[j])
                 temp_outs.append(out_d_d[i]*d_dx[j])
                 #update weights right here (?)
-                #print(out_d_d[i]*d_dw[j])
-                #self.Network[layer][i].Weights[j] -= out_d_d[i]*d_dw[j]*0.03#xp(-1*out_d_d[i]*d_dw[j])
-                #self.Network[layer][i].Weights[j] -= out_d_d[i]*d_dw[j]*0.03
+
                 lion = 0
                 if out_d_d[i]*d_dw[j] < 0:
                     lion = -1
@@ -189,80 +169,16 @@ class Net:
                 if lionless:
                     lion = out_d_d[i]*d_dw[j]
                 self.Network[layer][i].Weights[j] -= lion*l_rate
-            #temp_outs += [out_d_d[i]*d_dx[j] for j in range(d_dx)]
             prev_outs = np.add(prev_outs, temp_outs)
-            #cur_grads = np.add(cur_grads, )
-            #out_ds += 
-        return self._susser(output, layer-1, prev_outs, grad + cur_grads)
-        #out_ds = 
 
-           # d_dw = l[0]
-           # d_dx = l[1]
+        return self.BackProp(output, layer-1, prev_outs, grad + cur_grads)
 
-
-
-        #cur_grads = [d_dw[i]*out_d_d[i] for i in range(len(d_dw))]
-
-        #cur_grads = []
-
-    #Publics
     def GetLayer(self, depth):
         """
         Get layer at given depth
         """
         return self.Network[depth]
-'''
-#Test(s)
-sigmoid = lambda x:1/(1+exp(-1*x))
-d_dx_sigmoid = lambda x:sigmoid(x)*(1-sigmoid(x))
-#n = Net([2, 3, 2, 3, 5], [[sigmoid, d_dx_sigmoid] for i in range(4)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
-n = Net([2, 1, 1, 2], [[sigmoid, d_dx_sigmoid] for i in range(2)] + [[lambda x:x, lambda x:1]], [lambda a:np.linalg.norm(a), lambda a: 2*a])
 
-res = n._evaluate([1, 1, 1])
-
-#print("derivs: ", res[1])
-#print_net(n)
-#print(n.GradientVector)
-bp = BackProp()
-bp.GetGrad(n, [], [], [])
-
-for d in res[1]:
-    print("L")
-    for p in d:
-        print(p)
-
-def b_prop(res, layers):
-    ind = layers-1
-    layer = res[1][ind]
-    
-
-b_prop(res, 3)
-
-neur = Neuron(2, lambda : 1, [sigmoid, d_dx_sigmoid])
-c_neur = CostNeuron(3,  lambda : 1, [sigmoid, d_dx_sigmoid])#fix params
-#print("Eval_Result: ", c_neur.Evaluate([1, 2, 2], [1, 2, 3]))
-#print(neur)
-#print(neur.Evaluate([1, 1, 1])[0])
-
-#print(neur.Evaluate([1, 1, 1])[1])
-'''
-'''
-L
-([0.21646371070662088, 0.21646371070662088, 0.21646371070662088], [0.023298310088874834, 0.06017903508249897, 0.08280784850208056])
-L
-([0.18530551108987986, 0.12658759816004056], [0.16858080135412962, 0.05756391367055788])
-L
-([0.2232145669668299, 0.16838215712831228], [0.09444668972928201, 0.07591037060305607])
-([0.2028502258481585, 0.15302029373089238], [0.07658835468975284, 0.1486404021046774])
-'''
-'''
-
-#print(n._getCost([0, 1, 0], [1, 0, 0]))#output, target
-#cost = n._getCost()
-print("output:", res[0])
-print("target:", [1, 1])
-print("gradient: ", n._susser(res, 2, n._getCost(res[0], [1, 1])[1], []))
-'''
 t_net = Net([1, 1, 2, 1], [[lambda x:x, lambda x:1] for i in range(3)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
 r1 = t_net._evaluate([1, 2]) #input of 2 (1 is bias), -> we want output 4 (trying to recreate *2 function)
 print("Layers:")
@@ -275,34 +191,7 @@ for d in r1[1]:
     print("L")
     for p in d:
         print(p)
-#print("layers: ", len(r1[1]))
-#print("layers?: ", len(t_net.Network))
-'''
-cost = t_net._getCost(r1[0], 4) #tuple of cost and deriv wrt input
-grad = t_net._susser(r1, 2, cost[1], [])
-normalized_g = grad/np.linalg.norm(grad)
-print("out: ", r1[0])
-print("target: ", 4)
-print("cost: ", cost[0])
-print("grad: (not me)", grad)
-print("normalized: ", normalized_g)
-print("New Layers:")
-for l in t_net.Network:
-    print("L")
-    for n in l:
-        print(n)
-r2 = t_net._evaluate([1, 2])
-cost = t_net._getCost(r2[0], 4) #tuple of cost and deriv wrt input
-grad = t_net._susser(r2, 2, cost[1], [])
-r3 = t_net._evaluate([1, 2])
-cost = t_net._getCost(r3[0], 4) #tuple of cost and deriv wrt input
-grad = t_net._susser(r3, 2, cost[1], [])
-r4 = t_net._evaluate([1, 2])
 
-print("new: ", r2[0])
-print("newer: ", r3[0])
-print("newer still: ", r4[0])
-'''
 costs = []
 c1s = []
 c2s = []
@@ -322,7 +211,7 @@ for i in range(100):
     l = False
     if i > 100:
         l = True
-    grad = t_net._susser(r, 2, cost[1], [], (1.0/(i+2))) #result, starting layer #, cost deriv
+    grad = t_net.BackProp(r, 2, cost[1], [], (1.0/(i+2))) #result, starting layer #, cost deriv
     results.append(r)
 #for l in t_net.Network:
 #print(costs)
@@ -342,7 +231,7 @@ for i in range(10000):
     if i > 500 and abs(cost[0]) < 0.0015:
         break
     costs.append(abs(cost[0]))
-    grad = net_2._susser(r, 2, cost[1], [], (1.0/(i+2))) #result, starting layer #, cost deriv
+    grad = net_2.BackProp(r, 2, cost[1], [], (1.0/(i+2))) #result, starting layer #, cost deriv
 print(net_2._evaluate([1, 8])[0])
 print(net_2._evaluate([1, 3])[0])
 print("cost: ", costs[len(costs)-1])
@@ -354,14 +243,14 @@ sigmoid = lambda x:1/(1+exp(-1*x))
 d_dx_sigmoid = lambda x:sigmoid(x)*(1-sigmoid(x))
 
 net_3 = t_net = Net([1, 4, 4, 4, 7, 3, 1], [[sigmoid, d_dx_sigmoid] for i in range(3)] + [[lambda x:x, lambda x:1] for i in range(3)], [lambda a:np.linalg.norm(a), lambda a: 2*a])
-for i in range(10000):
+for i in range(1000):
     input = np.random.randint(1, 1000) #2
     r = net_2._evaluate([1, input])#input])
     cost = net_3._getCost(r[0], 2*input) #tuple of cost and deriv wrt input
     if i > 500 and abs(cost[0]) < 0.0015:
         break
     costs.append(abs(cost[0]))
-    grad = net_3._susser(r, 2, cost[1], [], (1.0/(i+2))) #result, starting layer #, cost deriv
+    grad = net_3.BackProp(r, 2, cost[1], [], (1.0/(i+2))) #result, starting layer #, cost deriv
 print(net_3._evaluate([1, 8])[0])
 print(net_3._evaluate([1, 3])[0])
 print("cost: ", costs[len(costs)-1])
