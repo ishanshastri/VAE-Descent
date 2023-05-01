@@ -11,15 +11,6 @@ def print_net(n):
             print(n)
     print("================")
 
-class BackProp:
-    def __init__(self) -> None:
-        pass
-
-    def GetGrad(self, net, input, target, output):
-        depth = len(net.Network)
-        for i in range(depth-1, -1, -1):
-            pass
-
 class Neuron:
     Weights: list()
     Activation: callable
@@ -48,8 +39,6 @@ class Neuron:
 
     def __str__(self):
         return str(self.Weights)
-
-
 
 class Net:
     Activations: callable
@@ -103,9 +92,6 @@ class Net:
         derivs.append(partials)
         return self._evaluate(output, curr+1, derivs)
 
-    #def _numWeights(self):
-    #    return np.sum(self.Dimensions)
-
    #def back_forth_prop:
         #propoagate back and forth between EIT->E2->DC->four-corners-of-MC->M3->MC->repeat
 
@@ -143,9 +129,17 @@ class Net:
         return [self.Length[0](diff), grad]
 
     def BackProp(self, output, layer, out_d_d, grad, l_rate = 0.03, lionless = False):
+        """
+        Recursive implementation of the Gradient Descent Algorithm
+        
+        By default uses LION optimization (faster, more effective in practise), 
+        otherwise keeps all directional information of the gradient
+        """
+        #Return gradient vector once all weights have been updated
         if layer<0:
             return grad
-        cur_grads = []
+
+        #Initialize gradient vec
         cur_grads = []
         l = output[1][layer]
         prev_outs = [0 for i in range(len(l[0][0]))]
@@ -156,21 +150,26 @@ class Net:
 
             temp_outs = []
             for j in range(len(d_dw)):
+                #Add to gradient vector, get partial derivs w.r.t outputs
                 cur_grads.append(out_d_d[i]*d_dw[j])
                 temp_outs.append(out_d_d[i]*d_dx[j])
-                #update weights right here (?)
 
+                #Calculate vector component using lion
                 lion = 0
                 if out_d_d[i]*d_dw[j] < 0:
                     lion = -1
                 elif out_d_d[i]*d_dw[j] > 0:
                     lion = 1
-                #lion += out_d_d[i]*d_dw[j]*lionless
+
+                #Bypass for lion function
                 if lionless:
                     lion = out_d_d[i]*d_dw[j]
                 self.Network[layer][i].Weights[j] -= lion*l_rate
-            prev_outs = np.add(prev_outs, temp_outs)
 
+            #Applying sum-rule of partial derivs
+            prev_outs = np.add(prev_outs, temp_outs) 
+
+        #Pass on relevant information to update weights in next layer (moving backwards)
         return self.BackProp(output, layer-1, prev_outs, grad + cur_grads)
 
     def GetLayer(self, depth):
